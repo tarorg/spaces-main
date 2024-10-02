@@ -1,130 +1,98 @@
 <script lang="ts">
     import { t } from "$lib/i18n/translations";
-    import { defaultNavPage } from "$lib/subnav";
+    import { page } from "$app/stores";
 
     import CobaltLogo from "$components/sidebar/CobaltLogo.svelte";
-    import SidebarTab from "$components/sidebar/SidebarTab.svelte";
-
-    import IconDownload from "@tabler/icons-svelte/IconDownload.svelte";
-    import IconSettings from "@tabler/icons-svelte/IconSettings.svelte";
-
-    import IconRepeat from "@tabler/icons-svelte/IconRepeat.svelte";
-
-    import IconComet from "@tabler/icons-svelte/IconComet.svelte";
-    import IconHeart from "@tabler/icons-svelte/IconHeart.svelte";
-    import IconInfoCircle from "@tabler/icons-svelte/IconInfoCircle.svelte";
 
     let screenWidth: number;
-    let settingsLink = defaultNavPage("settings");
-    let aboutLink = defaultNavPage("about");
 
-    $: screenWidth,
-       settingsLink = defaultNavPage("settings"),
-       aboutLink = defaultNavPage("about");
+    const navItems = [
+        { name: "save", link: "/", icon: "↓" },
+        { name: "settings", link: "/settings", icon: "⚙" },
+    ];
 </script>
 
 <svelte:window bind:innerWidth={screenWidth} />
 
 <nav id="sidebar" aria-label={$t("a11y.tabs.tab_panel")}>
     <CobaltLogo />
-    <div id="sidebar-tabs" role="tablist">
-        <div id="sidebar-actions" class="sidebar-inner-container">
-            <SidebarTab tabName="save" tabLink="/">
-                <IconDownload />
-            </SidebarTab>
-            <SidebarTab tabName="remux" tabLink="/remux" beta>
-                <IconRepeat />
-            </SidebarTab>
-        </div>
-        <div id="sidebar-info" class="sidebar-inner-container">
-            <SidebarTab tabName="settings" tabLink={settingsLink}>
-                <IconSettings />
-            </SidebarTab>
-            <SidebarTab tabName="donate" tabLink="/donate">
-                <IconHeart />
-            </SidebarTab>
-            <SidebarTab tabName="updates" tabLink="/updates">
-                <IconComet />
-            </SidebarTab>
-            <SidebarTab tabName="about" tabLink={aboutLink}>
-                <IconInfoCircle />
-            </SidebarTab>
-        </div>
-    </div>
+    <ul id="sidebar-tabs" role="tablist">
+        {#each navItems as item}
+            <li>
+                <a
+                    href={item.link}
+                    class="sidebar-tab"
+                    class:active={$page.url.pathname === item.link}
+                    aria-label={$t(`sidebar.${item.name}`)}
+                >
+                    <span class="icon">{item.icon}</span>
+                </a>
+            </li>
+        {/each}
+    </ul>
 </nav>
 
 <style>
-    #sidebar,
-    #sidebar-tabs,
-    .sidebar-inner-container {
-        display: flex;
-        flex-direction: column;
-    }
-
     #sidebar {
         background: var(--sidebar-bg);
         height: 100vh;
-        width: calc(var(--sidebar-width) + var(--sidebar-inner-padding) * 2);
+        width: 60px;
         position: sticky;
+        top: 0;
+        left: 0;
+        padding: 20px 0;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
 
     #sidebar-tabs {
-        height: 100%;
-        justify-content: space-between;
-        padding: var(--sidebar-inner-padding);
-        padding-bottom: var(--border-radius);
-        overflow-y: scroll;
+        list-style-type: none;
+        padding: 0;
+        margin: 40px 0 0 0;
+        width: 100%;
     }
 
-    @media screen and (max-width: 535px) {
-        #sidebar,
-        #sidebar-tabs,
-        .sidebar-inner-container {
+    .sidebar-tab {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 60px;
+        color: var(--text-color);
+        text-decoration: none;
+        font-size: 24px;
+        transition: background-color 0.2s ease;
+    }
+
+    .sidebar-tab:hover {
+        background-color: var(--sidebar-hover);
+    }
+
+    .sidebar-tab.active {
+        background-color: var(--sidebar-active);
+    }
+
+    @media screen and (max-width: 768px) {
+        #sidebar {
+            width: 100%;
+            height: auto;
+            position: fixed;
+            bottom: 0;
+            top: auto;
+            padding: 10px 0;
             flex-direction: row;
         }
 
-        #sidebar {
-            width: 100%;
-            height: var(--sidebar-height-mobile);
-            position: fixed;
-            bottom: 0;
-            justify-content: center;
-            align-items: flex-start;
-            z-index: 3;
-        }
-
-        #sidebar::before {
-            content: "";
-            z-index: 1;
-            width: 100%;
-            height: 100%;
-            display: block;
-            position: absolute;
-            pointer-events: none;
-            background: var(--sidebar-mobile-gradient);
-        }
-
         #sidebar-tabs {
-            overflow-y: visible;
-            overflow-x: scroll;
-            padding-bottom: 0;
-            padding: var(--sidebar-inner-padding) 0;
-            height: fit-content;
+            display: flex;
+            justify-content: space-around;
+            margin: 0;
         }
 
-        #sidebar :global(.sidebar-inner-container:first-child) {
-            padding-left: calc(var(--border-radius) * 2);
-        }
-
-        #sidebar :global(.sidebar-inner-container:last-child) {
-            padding-right: calc(var(--border-radius) * 2);
-        }
-    }
-
-    /* add padding for notch / dynamic island in landscape */
-    @media screen and (orientation: landscape) {
-        :global([data-iphone="true"]) #sidebar {
-            padding-left: env(safe-area-inset-left);
+        .sidebar-tab {
+            height: 40px;
         }
     }
 </style>

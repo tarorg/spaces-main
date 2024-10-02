@@ -2,8 +2,7 @@
     import { t } from "$lib/i18n/translations";
 
     import Omnibox from "$components/save/Omnibox.svelte";
-    import Meowbalt from "$components/misc/Meowbalt.svelte";
-    // import SupportedServices from "$components/save/SupportedServices.svelte";
+    // Removed import for Meowbalt
 </script>
 
 <svelte:head>
@@ -18,7 +17,7 @@
         data-first-focus
         data-focus-ring-hidden
     >
-        <Meowbalt emotion="smile" />
+        <!-- Removed Meowbalt component -->
         <Omnibox />
     </main>
     <div id="terms-note">

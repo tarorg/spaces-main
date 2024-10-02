@@ -448,4 +448,20 @@
         animation: none !important;
         transition: none !important;
     }
+
+    :global(body) {
+        display: flex;
+    }
+
+    :global(#app) {
+        flex: 1;
+        margin-left: 60px;
+    }
+
+    @media screen and (max-width: 768px) {
+        :global(#app) {
+            margin-left: 0;
+            margin-bottom: 60px; /* Adjust based on your mobile sidebar height */
+        }
+    }
 </style>
