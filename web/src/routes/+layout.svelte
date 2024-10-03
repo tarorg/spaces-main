@@ -12,14 +12,9 @@
     import "$lib/polyfills";
     import env from "$lib/env";
     import settings from "$lib/state/settings";
-    import locale from "$lib/i18n/locale";
-
-    import { t } from "$lib/i18n/translations";
-    import { i18n } from "$lib/i18n/translations";
 
     import { device, app } from "$lib/device";
     import { turnstileCreated } from "$lib/state/turnstile";
-    import currentTheme, { statusBarColors } from "$lib/state/theme";
 
     import Sidebar from "$components/sidebar/Sidebar.svelte";
     import Turnstile from "$components/misc/Turnstile.svelte";
@@ -27,24 +22,10 @@
     import DialogHolder from "$components/dialog/DialogHolder.svelte";
     import UpdateNotification from "$components/misc/UpdateNotification.svelte";
 
-    // Ensure that the sidebar translations are loaded
-    i18n.addMessages('en', {
-        sidebar: {
-            save: 'Save',
-            settings: 'Settings'
-        }
-    });
-
-    $: reduceMotion =
-        $settings.appearance.reduceMotion || device.prefers.reducedMotion;
-    $: reduceTransparency =
-        $settings.appearance.reduceTransparency ||
-        device.prefers.reducedTransparency;
+    $: reduceMotion = device.prefers.reducedMotion;
+    $: reduceTransparency = device.prefers.reducedTransparency;
 
     $: spawnTurnstile = !!$cachedInfo?.info?.cobalt?.turnstileSitekey;
-
-    // Update the type of statusBarColors
-    const typedStatusBarColors: { light: string; dark: string } = statusBarColors;
 
     afterNavigate(async() => {
         const to_focus: HTMLElement | null =
@@ -58,15 +39,15 @@
 </script>
 
 <svelte:head>
-    <meta name="description" content={$t("general.embed.description")}>
-    <meta property="og:description" content={$t("general.embed.description")}>
+    <meta name="description" content="Spaces">
+    <meta property="og:description" content="Spaces">
 
     {#if env.HOST}
         <meta property="og:url" content="https://{env.HOST}{$page.url.pathname}">
     {/if}
 
     {#if device.is.mobile}
-        <meta name="theme-color" content={typedStatusBarColors[$currentTheme]} />
+        <meta name="theme-color" content="#ffffff" />
     {/if}
 
     {#if env.PLAUSIBLE_ENABLED}
@@ -79,7 +60,7 @@
     {/if}
 </svelte:head>
 
-<div style="display: contents" data-theme={browser ? $currentTheme : undefined} lang={$locale}>
+<div style="display: contents">
     <div
         id="cobalt"
         class:loaded={browser}
@@ -156,7 +137,6 @@
 
         --switcher-padding: var(--sidebar-inner-padding);
 
-        /* used for fading the tab bar on scroll */
         --sidebar-mobile-gradient: linear-gradient(
             90deg,
             rgba(0, 0, 0, 0.9) 0%,
@@ -179,10 +159,6 @@
             var(--button-elevated-shimmer),
             var(--button-elevated)
         );
-    }
-
-    :global([data-theme="light"] [data-reduce-transparency="true"]) {
-        --dialog-backdrop: rgba(255, 255, 255, 0.6);
     }
 
     :global(html),
