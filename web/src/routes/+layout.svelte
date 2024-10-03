@@ -15,6 +15,7 @@
     import locale from "$lib/i18n/locale";
 
     import { t } from "$lib/i18n/translations";
+    import { i18n } from "$lib/i18n/translations";
 
     import { device, app } from "$lib/device";
     import { turnstileCreated } from "$lib/state/turnstile";
@@ -26,6 +27,14 @@
     import DialogHolder from "$components/dialog/DialogHolder.svelte";
     import UpdateNotification from "$components/misc/UpdateNotification.svelte";
 
+    // Ensure that the sidebar translations are loaded
+    i18n.addMessages('en', {
+        sidebar: {
+            save: 'Save',
+            settings: 'Settings'
+        }
+    });
+
     $: reduceMotion =
         $settings.appearance.reduceMotion || device.prefers.reducedMotion;
     $: reduceTransparency =
@@ -33,6 +42,9 @@
         device.prefers.reducedTransparency;
 
     $: spawnTurnstile = !!$cachedInfo?.info?.cobalt?.turnstileSitekey;
+
+    // Update the type of statusBarColors
+    const typedStatusBarColors: { light: string; dark: string } = statusBarColors;
 
     afterNavigate(async() => {
         const to_focus: HTMLElement | null =
@@ -54,7 +66,7 @@
     {/if}
 
     {#if device.is.mobile}
-        <meta name="theme-color" content={statusBarColors[$currentTheme]} />
+        <meta name="theme-color" content={typedStatusBarColors[$currentTheme]} />
     {/if}
 
     {#if env.PLAUSIBLE_ENABLED}
